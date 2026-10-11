@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Campus Event Registration Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <section class="login-screen active" id="loginScreen">
+        <div class="branding-panel">
+          <div class="brand-badge">🏫</div>
+          <h1>Campus Event Hub</h1>
+          <p>Smart registration workflow for technical events and campus activities.</p>
+          <ul>
+            <li>✅ Registration Validation</li>
+            <li>🧾 Attendance Tracking</li>
+            <li>🔍 Search & Filters</li>
+            <li>📊 Live Dashboard Reports</li>
+          </ul>
+        </div>
+
+        <div class="auth-card-wrap">
+          <div class="auth-card login-panel active" id="loginPanel">
+            <div class="login-header">
+              <span class="eyebrow">Welcome back</span>
+              <h2>Sign in</h2>
+            </div>
+
+            <div class="field-group">
+              <label for="username">Username</label>
+              <input id="username" type="text" value="admin" />
+            </div>
+
+            <div class="field-group">
+              <label for="password">Password</label>
+              <input id="password" type="password" value="admin123" />
+            </div>
+
+            <button class="primary-btn" id="loginBtn">Login</button>
+            <p class="toggle-text">
+              Don’t have an account?
+              <button class="link-btn" id="showSignupBtn" type="button">Sign Up</button>
+            </p>
+            <p class="demo-text">Demo login: admin / admin123</p>
+          </div>
+
+          <div class="auth-card signup-panel" id="signupPanel">
+            <div class="login-header">
+              <span class="eyebrow">Create account</span>
+              <h2>Sign up</h2>
+            </div>
+
+            <div class="field-group">
+              <label for="signupUsername">Username</label>
+              <input id="signupUsername" type="text" placeholder="Choose a username" />
+            </div>
+
+            <div class="field-group">
+              <label for="signupPassword">Password</label>
+              <input id="signupPassword" type="password" placeholder="Create password" />
+            </div>
+
+            <div class="field-group">
+              <label for="confirmPassword">Confirm Password</label>
+              <input id="confirmPassword" type="password" placeholder="Confirm password" />
+            </div>
+
+            <button class="primary-btn" id="signupBtn">Create Account</button>
+            <p class="toggle-text">
+              Already have an account?
+              <button class="link-btn" id="showLoginBtn" type="button">Sign In</button>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <main class="dashboard hidden" id="dashboardScreen">
+        <header class="topbar">
+          <div class="title-wrap">
+            <div class="title-icon">🎓</div>
+            <h2>Institute Technical Event Portal</h2>
+          </div>
+
+          <div class="topbar-actions">
+            <span class="user-badge" id="userBadge">Logged in as: Admin</span>
+            <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+          </div>
+        </header>
+
+        <section class="summary-grid">
+          <article class="summary-card blue">
+            <div class="card-icon">👥</div>
+            <span>Total Registrations</span>
+            <strong id="totalRegistrations">0</strong>
+          </article>
+
+          <article class="summary-card green">
+            <div class="card-icon">🏛️</div>
+            <span>Unique Departments</span>
+            <strong id="uniqueDepartments">0</strong>
+          </article>
+
+          <article class="summary-card amber">
+            <div class="card-icon">🎯</div>
+            <span>Events Scheduled</span>
+            <strong id="eventsScheduled">0</strong>
+          </article>
+
+          <article class="summary-card purple">
+            <div class="card-icon">🔍</div>
+            <span>Filtered Results</span>
+            <strong id="filteredResults">0</strong>
+          </article>
+        </section>
+
+        <section class="workspace-grid">
+          <aside class="panel form-panel">
+            <h3>📝 Registration Form</h3>
+
+            <div class="field-group">
+              <label for="fullName">Full Name</label>
+              <input id="fullName" type="text" placeholder="Enter full name" />
+            </div>
+
+            <div class="field-group">
+              <label for="studentId">Student ID</label>
+              <input id="studentId" type="text" placeholder="Enter student ID" />
+            </div>
+
+            <div class="field-group">
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="Enter email" />
+            </div>
+
+            <div class="field-group">
+              <label for="department">Department</label>
+              <select id="department">
+                <option>Computer Science</option>
+                <option>Electrical</option>
+                <option>Mechanical</option>
+                <option>Civil</option>
+                <option>Business Administration</option>
+                <option>Applied Sciences</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="event">Event</label>
+              <select id="event">
+                <option>AI & Robotics Workshop</option>
+                <option>Cyber Security Seminar</option>
+                <option>Web Development Bootcamp</option>
+                <option>Data Science Challenge</option>
+                <option>IoT Expo</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="contact">Contact Number</label>
+              <input id="contact" type="text" placeholder="Enter contact number" />
+            </div>
+
+            <div class="button-row">
+              <button class="primary-btn" id="registerBtn">✅ Register</button>
+              <button class="secondary-btn" id="clearBtn">🧹 Clear</button>
+              <button class="success-btn" id="exportBtn">📤 Export</button>
+            </div>
+          </aside>
+
+          <section class="panel list-panel">
+            <div class="panel-header">
+              <h3>📋 Attendance List</h3>
+            </div>
+
+            <div class="filter-row">
+              <div class="filter-group search-box">
+                <label>Search</label>
+                <input id="searchInput" type="text" placeholder="Search by name, ID or email" />
+              </div>
+
+              <div class="filter-group">
+                <label>Department</label>
+                <select id="filterDepartment">
+                  <option value="All">All</option>
+                  <option>Computer Science</option>
+                  <option>Electrical</option>
+                  <option>Mechanical</option>
+                  <option>Civil</option>
+                  <option>Business Administration</option>
+                  <option>Applied Sciences</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label>Event</label>
+                <select id="filterEvent">
+                  <option value="All">All</option>
+                  <option>AI & Robotics Workshop</option>
+                  <option>Cyber Security Seminar</option>
+                  <option>Web Development Bootcamp</option>
+                  <option>Data Science Challenge</option>
+                  <option>IoT Expo</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Student ID</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Event</th>
+                    <th>Contact</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
