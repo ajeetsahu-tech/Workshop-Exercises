@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Next-Gen Library Seat & Equipment Booking Simulator (Exercise 1.2) - Real-time inventory tracking, interactive floor plan, and student reservation management." />
+  <title>Library Seat & Equipment Booking Simulator | Exercise 1.2</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="exercise1.2.css" />
+</head>
+<body class="theme-light">
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Header Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="brand-logo" aria-hidden="true">
+          <span class="logo-icon">📚</span>
+          <span class="pulse-dot"></span>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title-wrap">
+            <h1>LibSphere Portal</h1>
+            <span class="badge-version">Ex 1.2 Pro</span>
+          </div>
+          <p class="brand-subtitle">Library Seat & Equipment Booking Simulator</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="live-clock-badge" id="liveClockBadge">
+          <span class="status-indicator"></span>
+          <span id="currentTime">--:--:--</span>
+        </div>
+
+        <a href="index.html" class="nav-switch-btn" title="Switch to Campus Event Portal (Exercise 1.1)">
+          <span class="nav-icon">🎓</span>
+          <span class="nav-text">Campus Event Hub</span>
+        </a>
+
+        <button id="themeToggleBtn" class="theme-btn" type="button" aria-label="Toggle Dark/Light Mode" title="Toggle theme">
+          <span class="theme-icon" id="themeIcon">🌙</span>
+        </button>
+
+        <button id="resetDataBtn" class="reset-btn" type="button" title="Reset all simulator state">
+          <span class="icon">🔄</span> Reset
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="content-container">
+
+      <!-- Top Summary Metrics Grid -->
+      <section class="metrics-grid" aria-label="System Metrics">
+        <article class="metric-card card-blue">
+          <div class="metric-header">
+            <span class="metric-title">Total Bookings</span>
+            <div class="metric-icon-wrap">📋</div>
+          </div>
+          <div class="metric-body">
+            <span class="metric-value" id="statTotalBookings">0</span>
+            <span class="metric-tag tag-blue" id="statActiveStudents">0 Active Students</span>
+          </div>
+          <div class="metric-progress-track">
+            <div class="metric-progress-bar bar-blue" id="bookingProgressBar" style="width: 0%"></div>
+          </div>
+        </article>
+
+        <article class="metric-card card-emerald">
+          <div class="metric-header">
+            <span class="metric-title">Available Seats</span>
+            <div class="metric-icon-wrap">🪑</div>
+          </div>
+          <div class="metric-body">
+            <span class="metric-value" id="statSeatsLeft">24</span>
+            <span class="metric-tag tag-emerald" id="statSeatsTotal">of 24 total</span>
+          </div>
+          <div class="metric-progress-track">
+            <div class="metric-progress-bar bar-emerald" id="seatsProgressBar" style="width: 100%"></div>
+          </div>
+        </article>
+
+        <article class="metric-card card-violet">
+          <div class="metric-header">
+            <span class="metric-title">Available Equipment</span>
+            <div class="metric-icon-wrap">💻</div>
+          </div>
+          <div class="metric-body">
+            <span class="metric-value" id="statEquipmentLeft">16</span>
+            <span class="metric-tag tag-violet" id="statEquipmentTotal">of 16 in stock</span>
+          </div>
+          <div class="metric-progress-track">
+            <div class="metric-progress-bar bar-violet" id="equipmentProgressBar" style="width: 100%"></div>
+          </div>
+        </article>
+
+        <article class="metric-card card-amber">
+          <div class="metric-header">
+            <span class="metric-title">Capacity Utilization</span>
+            <div class="metric-icon-wrap">⚡</div>
+          </div>
+          <div class="metric-body">
+            <span class="metric-value" id="statUtilization">0%</span>
+            <span class="metric-tag tag-amber" id="utilizationStatus">Optimal Space</span>
+          </div>
+          <div class="metric-progress-track">
+            <div class="metric-progress-bar bar-amber" id="utilizationProgressBar" style="width: 0%"></div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Main Workspace Split -->
+      <div class="workspace-grid">
+
+        <!-- Left Column: Form & Equipment Inventory -->
+        <aside class="workspace-left">
+          <!-- Reservation Form -->
+          <section class="glass-panel form-panel">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <span class="panel-badge-icon">✍️</span>
+                <div>
+                  <h2 class="panel-title">New Reservation</h2>
+                  <p class="panel-desc">Reserve library workstation & tech hardware</p>
+                </div>
+              </div>
+            </div>
+
+            <form id="bookingForm" class="booking-form" novalidate>
+              <!-- Student Name -->
+              <div class="form-group">
+                <label for="studentName" class="form-label">
+                  Student Full Name <span class="required">*</span>
+                </label>
+                <div class="input-with-icon">
+                  <span class="input-icon">👤</span>
+                  <input
+                    type="text"
+                    id="studentName"
+                    class="form-control"
+                    placeholder="e.g. Sarah Jenkins"
+                    required
+                    autocomplete="off"
+                  />
+                </div>
+                <small class="field-hint">Enter student or researcher's name</small>
+              </div>
+
+              <!-- Student ID / Roll (Bonus field for realism) -->
+              <div class="form-group">
+                <label for="studentId" class="form-label">
+                  Student / Roll ID <span class="optional">(Optional)</span>
+                </label>
+                <div class="input-with-icon">
+                  <span class="input-icon">🪪</span>
+                  <input
+                    type="text"
+                    id="studentId"
+                    class="form-control font-mono"
+                    placeholder="e.g. CS-2026-042"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+
+              <!-- Seat Selection -->
+              <div class="form-group">
+                <div class="label-row">
+                  <label for="seatType" class="form-label">
+                    Workstation / Seat Type <span class="required">*</span>
+                  </label>
+                  <span class="stock-pill" id="selectedSeatStockPill">Available: 12</span>
+                </div>
+                <div class="custom-select-wrap">
+                  <select id="seatType" class="form-control form-select">
+                    <option value="Study Table">📖 Study Table (12 seats total)</option>
+                    <option value="Computer Desk">🖥️ Computer Desk (8 seats total)</option>
+                    <option value="Private Cabin">🔒 Private Cabin (4 seats total)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Equipment Selection & Quantity -->
+              <div class="form-row-grid">
+                <div class="form-group flex-2">
+                  <div class="label-row">
+                    <label for="equipmentType" class="form-label">
+                      Equipment <span class="required">*</span>
+                    </label>
+                    <span class="stock-pill" id="selectedEquipmentStockPill">Stock: 6</span>
+                  </div>
+                  <div class="custom-select-wrap">
+                    <select id="equipmentType" class="form-control form-select">
+                      <option value="Laptop">💻 Laptop</option>
+                      <option value="Projector">📽️ Projector</option>
+                      <option value="Camera">📷 Camera</option>
+                      <option value="Microphone">🎙️ Microphone</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group flex-1">
+                  <label for="equipmentQty" class="form-label">
+                    Quantity <span class="required">*</span>
+                  </label>
+                  <div class="stepper-wrap">
+                    <button type="button" class="stepper-btn" id="qtyDecrementBtn" aria-label="Decrease quantity">-</button>
+                    <input
+                      type="number"
+                      id="equipmentQty"
+                      class="form-control stepper-input"
+                      value="1"
+                      min="1"
+                      max="10"
+                      required
+                    />
+                    <button type="button" class="stepper-btn" id="qtyIncrementBtn" aria-label="Increase quantity">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Duration selector -->
+              <div class="form-group">
+                <label for="bookingDuration" class="form-label">Reservation Slot</label>
+                <div class="custom-select-wrap">
+                  <select id="bookingDuration" class="form-control form-select">
+                    <option value="2 Hours">2 Hours (Standard)</option>
+                    <option value="4 Hours">4 Hours (Extended)</option>
+                    <option value="Full Day">Full Day (Academic)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="bookNowBtn">
+                  <span class="btn-icon">✅</span>
+                  <span>Confirm Booking</span>
+                </button>
+                <button type="button" class="btn btn-secondary" id="clearFormBtn">
+                  <span class="btn-icon">🧹</span>
+                  <span>Clear</span>
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Live Equipment Inventory Card -->
+          <section class="glass-panel inventory-panel">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <span class="panel-badge-icon">📦</span>
+                <div>
+                  <h3 class="panel-title text-sm">Real-time Stock Monitor</h3>
+                  <p class="panel-desc">Hardware allocation tracking</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="inventory-list" id="inventoryMonitorList">
+              <!-- Rendered dynamically by script.js -->
+            </div>
+          </section>
+        </aside>
+
+        <!-- Right Column: Interactive Floor Map & Records Table -->
+        <section class="workspace-right">
+          <!-- Interactive Visual Floor Plan -->
+          <div class="glass-panel floor-plan-panel">
+            <div class="panel-header flex-between">
+              <div class="panel-title-group">
+                <span class="panel-badge-icon">🗺️</span>
+                <div>
+                  <h2 class="panel-title">Interactive Floor Map</h2>
+                  <p class="panel-desc">Click an available pod to auto-fill seat selection</p>
+                </div>
+              </div>
+              <div class="floor-legend">
+                <span class="legend-item"><span class="legend-dot dot-available"></span> Available</span>
+                <span class="legend-item"><span class="legend-dot dot-occupied"></span> Booked</span>
+                <span class="legend-item"><span class="legend-dot dot-selected"></span> Selected</span>
+              </div>
+            </div>
+
+            <!-- Seat Filter Tabs -->
+            <div class="seat-filter-tabs" role="tablist">
+              <button class="seat-tab active" data-filter="all" type="button">All Zones (24)</button>
+              <button class="seat-tab" data-filter="Study Table" type="button">Study Tables (12)</button>
+              <button class="seat-tab" data-filter="Computer Desk" type="button">Computer Desks (8)</button>
+              <button class="seat-tab" data-filter="Private Cabin" type="button">Private Cabins (4)</button>
+            </div>
+
+            <!-- Visual Seat Grid -->
+            <div class="seat-grid-container" id="seatGridContainer">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Booked Records Section -->
+          <div class="glass-panel table-panel">
+            <div class="panel-header flex-between flex-wrap gap-md">
+              <div class="panel-title-group">
+                <span class="panel-badge-icon">📑</span>
+                <div>
+                  <h2 class="panel-title">Booked Records Log</h2>
+                  <p class="panel-desc">Manage, search, filter and export reservations</p>
+                </div>
+              </div>
+
+              <div class="table-actions-toolbar">
+                <button type="button" class="btn btn-outline" id="exportCsvBtn" title="Export records to CSV">
+                  <span>📥 Export CSV</span>
+                </button>
+                <button type="button" class="btn btn-outline" id="printReportBtn" title="Print booking manifest">
+                  <span>🖨️ Print</span>
+                </button>
+                <button type="button" class="btn btn-danger-outline" id="clearAllBookingsBtn" title="Release all current bookings">
+                  <span>🗑️ Release All</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Search & Filters Toolbar -->
+            <div class="filter-toolbar">
+              <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input
+                  type="text"
+                  id="recordSearchInput"
+                  class="search-input"
+                  placeholder="Search by student name, ID, or gear..."
+                />
+                <button type="button" id="clearSearchBtn" class="clear-search-btn" title="Clear search">✕</button>
+              </div>
+
+              <div class="filter-dropdowns">
+                <select id="filterSeatSelect" class="filter-select">
+                  <option value="all">All Seats</option>
+                  <option value="Study Table">Study Table</option>
+                  <option value="Computer Desk">Computer Desk</option>
+                  <option value="Private Cabin">Private Cabin</option>
+                </select>
+
+                <select id="filterEquipmentSelect" class="filter-select">
+                  <option value="all">All Equipment</option>
+                  <option value="Laptop">Laptop</option>
+                  <option value="Projector">Projector</option>
+                  <option value="Camera">Camera</option>
+                  <option value="Microphone">Microphone</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Records Table -->
+            <div class="table-responsive">
+              <table class="records-table" id="bookingsTable">
+                <thead>
+                  <tr>
+                    <th>Ref #</th>
+                    <th>Student Name</th>
+                    <th>Seat Category</th>
+                    <th>Allocated Equipment</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                    <th class="text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="bookingsTableBody">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+
+              <!-- Empty state placeholder -->
+              <div class="empty-state hidden" id="tableEmptyState">
+                <div class="empty-icon">📭</div>
+                <h3>No Reservations Found</h3>
+                <p id="emptyStateText">No students have reserved seats or equipment yet. Fill in the form to register a booking.</p>
+              </div>
+            </div>
+
+            <!-- Table Footer -->
+            <div class="table-footer">
+              <span class="table-count-info" id="tableRecordCount">Showing 0 reservations</span>
+              <span class="table-disclaimer">⚡ Stock automatically recalibrates upon booking cancellation</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Reservation Detail Modal -->
+  <div class="modal-overlay hidden" id="bookingDetailModal" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalStudentName">Reservation Pass</h3>
+        <button type="button" class="modal-close-btn" id="modalCloseBtn">✕</button>
+      </div>
+      <div class="modal-body" id="modalCardBody">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="modalCloseActionBtn">Close</button>
+        <button type="button" class="btn btn-primary" id="modalPrintPassBtn">🖨️ Print Pass</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="exercise1.2.js"></script>
+</body>
+</html>
