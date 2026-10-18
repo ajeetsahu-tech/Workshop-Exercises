@@ -45,7 +45,7 @@ The technologies used will depend on the requirements of each exercise. The work
 
 ## 📌 Progress
 
-**Completed:** 1 out of 8 exercises
+**Completed:** 2 out of 8 exercises
 
 This repository will be updated regularly as I complete the remaining exercises.
 
