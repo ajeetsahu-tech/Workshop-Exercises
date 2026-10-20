@@ -43,6 +43,18 @@ The technologies used will depend on the requirements of each exercise. The work
 - Develop problem-solving and implementation skills.
 - Maintain a record of workshop exercises using Git and GitHub.
 
+## 🌿 Workshop Exercise Branches
+
+To keep the workshop exercises organized, separate Git branches are used for individual exercises.
+
+- **`main`** — Main repository branch.
+- **`exercise-1.1`** — Contains the code and files for Exercise 1.1.
+- **`exercise-1.2`** — Contains the code and files for Exercise 1.2.
+
+Each exercise branch is maintained separately to make it easier to explore, practice, and track individual workshop tasks.
+
+**Note:** Switch to the relevant branch to view its exercise files.
+
 ## 📌 Progress
 
 **Completed:** 2 out of 8 exercises
